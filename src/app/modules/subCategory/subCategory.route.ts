@@ -1,34 +1,34 @@
 import { Router } from 'express';
-import { DegreeController } from './degree.controller';
 import authHandler from '../../middlewares/authHandler';
 import { USER_ROLE } from '../user/user.constant';
 import validateRequestHandler from '../../middlewares/validateRequestHandler';
-import { DegreeValidation } from './degree.validation';
+import { SubCategoryValidation } from './subCategory.validation';
+import { SubCategoryController } from './subCategory.controller';
 
 const router = Router();
 
 router.post(
     '/',
     authHandler(USER_ROLE.ADMIN),
-    validateRequestHandler(DegreeValidation.createDegreeValidationSchema),
-    DegreeController.createDegree
+    validateRequestHandler(SubCategoryValidation.createSubCategoryValidationSchema),
+    SubCategoryController.createSubCategory
 );
 
 router.get(
     '/',
     authHandler(USER_ROLE.ADMIN, USER_ROLE.MODERATOR),
-    DegreeController.getAllDegrees
+    SubCategoryController.getAllSubCategories
 );
 
 router.get(
     '/:id',
     authHandler(USER_ROLE.ADMIN, USER_ROLE.MODERATOR),
-    DegreeController.getDegreeById
+    SubCategoryController.getSubCategoryById
 );
 router.patch(
     '/:id',
     authHandler(USER_ROLE.ADMIN, USER_ROLE.MODERATOR),
-    DegreeController.updateDegree
+    SubCategoryController.updateSubCategory
 );
 
-export const DegreeRoutes = router;
+export const SubCategoryRoutes = router;

@@ -1,19 +1,19 @@
 import { Schema, model, Types } from 'mongoose';
 
-const DegreeSchema = new Schema({
+const subCategorySchema = new Schema({
     name: {
         type: String,
         required: true,
         trim: true,
         unique: true,
     },
-    subjectCategory: {
+    category: {
         type: Types.ObjectId,
-        ref: 'SubjectCategory',
+        ref: 'Category',
         required: true,
     },
 });
 
-const Degree = model('Degree', DegreeSchema);
+const SubCategory = model('SubCategory', subCategorySchema);
 
-export default Degree;
+export default SubCategory;

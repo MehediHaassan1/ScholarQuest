@@ -1,6 +1,6 @@
 import { ObjectId } from "mongoose";
 
-export type TDegree = {
+export type TSubCategory = {
     name: string;
-    subjectCategory: ObjectId;
+    category: ObjectId;
 }

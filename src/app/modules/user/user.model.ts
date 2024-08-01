@@ -147,9 +147,21 @@ const UserSchema = new Schema<TUser, TUserModel>({
     programSpecificRequirements: {
         type: ProgramSpecificRequirementsSchema,
     },
-}, {
-    timestamps: true, // Add timestamps (createdAt, updatedAt)
+},
+    {
+        timestamps: true,
+        toJSON: {
+            virtuals: true,
+        },
+    }
+);
+
+// virtual
+UserSchema.virtual('fullName').get(function () {
+    return `${this?.name?.firstName} ${this?.name?.middleName ? this?.name?.middleName + ' ' : ''}${this?.name?.lastName}`;
 });
+
+
 
 // Query Middleware
 UserSchema.pre('find', function (next) {

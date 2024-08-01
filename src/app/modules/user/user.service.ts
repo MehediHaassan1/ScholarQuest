@@ -62,10 +62,10 @@ const changeStatusIntoDB = async (id: string, payload: { status: string }) => {
         throw new AppError(httpStatus.FORBIDDEN, 'User not exists');
     }
 
-    await User.findByIdAndUpdate(id, payload, {
+    const result = await User.findByIdAndUpdate(id, payload, {
         new: true,
     });
-    return null;
+    return result;
 };
 
 const updateUserProfileIntoDB = async (userData: JwtPayload, profileData: Partial<TUser>) => {
@@ -100,7 +100,7 @@ const updateUserProfileIntoDB = async (userData: JwtPayload, profileData: Partia
     }
 
     //  update the info
-    await User.findOneAndUpdate(
+    const result = await User.findOneAndUpdate(
         {
             email: user?.email
         },
@@ -113,7 +113,7 @@ const updateUserProfileIntoDB = async (userData: JwtPayload, profileData: Partia
         }
     );
 
-    return null;
+    return result;
 }
 
 const updateUserRoleIntoDB = async (id: string) => {

@@ -2,36 +2,36 @@ import { Router } from "express";
 import authHandler from "../../middlewares/authHandler";
 import { USER_ROLE } from "../user/user.constant";
 import validateRequestHandler from "../../middlewares/validateRequestHandler";
-import { SubjectCategoryValidation } from "./subjectCategory.validation";
-import { SubjectCategoryController } from "./subjectCategory.controller";
+import { CategoryValidation } from "./category.validation";
+import { CategoryController } from "./category.controller";
 
 const router = Router();
 
 router.post(
     '/',
     authHandler(USER_ROLE.ADMIN),
-    validateRequestHandler(SubjectCategoryValidation),
-    SubjectCategoryController.createSubjectCategory
+    validateRequestHandler(CategoryValidation),
+    CategoryController.createCategory
 )
 
 router.get(
     '/',
     authHandler(USER_ROLE.ADMIN, USER_ROLE.MODERATOR),
-    SubjectCategoryController.getAllSubjectCategories
+    CategoryController.getAllCategories
 )
 
 router.get(
     '/:id',
     authHandler(USER_ROLE.ADMIN, USER_ROLE.MODERATOR),
-    SubjectCategoryController.getSingleSubjectCategory
+    CategoryController.getSingleCategory
 )
 
 router.patch(
     '/:id',
     authHandler(USER_ROLE.ADMIN),
-    validateRequestHandler(SubjectCategoryValidation),
-    SubjectCategoryController.updateSubjectCategory
+    validateRequestHandler(CategoryValidation),
+    CategoryController.updateCategory
 )
 
 
-export const SubjectCategoryRoutes = router;
+export const CategoryRoutes = router;

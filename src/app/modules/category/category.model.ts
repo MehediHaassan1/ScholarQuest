@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose';
 
-const SubjectCategorySchema = new Schema({
+const categorySchema = new Schema({
     name: {
         type: String,
         required: true,
@@ -9,6 +9,6 @@ const SubjectCategorySchema = new Schema({
     },
 });
 
-const SubjectCategory = model('SubjectCategory', SubjectCategorySchema);
+const Category = model('Category', categorySchema);
 
-export default SubjectCategory;
+export default Category;
