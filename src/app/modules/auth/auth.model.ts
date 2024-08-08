@@ -1,4 +1,6 @@
 import { model, Schema } from "mongoose";
+import config from "../../config";
+import bcrypt from 'bcrypt';
 
 const registrationSchema = new Schema({
     username: {
@@ -25,6 +27,23 @@ const registrationSchema = new Schema({
     }
 }, {
     timestamps: true,
+});
+
+// hashed the password field
+registrationSchema.pre('save', async function (next) {
+    this.password = await bcrypt.hash(
+        this.password,
+        Number(config.saltRounds)
+    )
+    next();
+})
+
+// remove the password field in the response
+registrationSchema.set('toJSON', {
+    transform: (doc, ret, options) => {
+        delete ret.password;
+        return ret;
+    }
 });
 
 const UserRegistration = model('UserRegistration', registrationSchema);

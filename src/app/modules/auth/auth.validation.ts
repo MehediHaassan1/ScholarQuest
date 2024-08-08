@@ -11,4 +11,6 @@ const registrationSchema = z.object({
         .max(12, { message: "Password should not exceed 12 characters." }),
 });
 
-export default registrationSchema;
+export const AuthValidations = {
+    registrationSchema
+}
