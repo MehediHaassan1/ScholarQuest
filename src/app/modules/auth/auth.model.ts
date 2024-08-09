@@ -1,13 +1,21 @@
 import { model, Schema } from "mongoose";
 import config from "../../config";
 import bcrypt from 'bcrypt';
+import { RegisterModel, TRegister } from "./auth.interface";
 
-const registrationSchema = new Schema({
+// Define the schema
+const registerSchema = new Schema<TRegister, RegisterModel>({
     username: {
         type: String,
         required: true,
         unique: true,
         trim: true,
+    },
+    role: {
+        type: String,
+        enum: ['admin', 'moderator', 'user'], // Define allowed roles
+        required: true,
+        default: 'user',
     },
     email: {
         type: String,
@@ -20,17 +28,22 @@ const registrationSchema = new Schema({
         type: String,
         required: true,
     },
-    role: {
+    isDeleted: {
+        type: Boolean,
+        default: false,
+    },
+    status: {
         type: String,
-        default: 'user',
-        enum: ['user', 'admin', 'moderator'],
-    }
+        enum: ['active', 'blocked'], // Define allowed statuses
+        required: true,
+        default: 'active',
+    },
 }, {
-    timestamps: true,
+    timestamps: true, // Automatically adds createdAt and updatedAt fields
 });
 
 // hashed the password field
-registrationSchema.pre('save', async function (next) {
+registerSchema.pre('save', async function (next) {
     this.password = await bcrypt.hash(
         this.password,
         Number(config.saltRounds)
@@ -39,13 +52,20 @@ registrationSchema.pre('save', async function (next) {
 })
 
 // remove the password field in the response
-registrationSchema.set('toJSON', {
+registerSchema.set('toJSON', {
     transform: (doc, ret, options) => {
         delete ret.password;
         return ret;
     }
 });
 
-const UserRegistration = model('UserRegistration', registrationSchema);
+registerSchema.statics.isPasswordMatched = async function (
+    loginPassword,
+    registerPassword,
+) {
+    return await bcrypt.compare(loginPassword, registerPassword);
+};
+
+const UserRegistration = model<TRegister, RegisterModel>('UserRegistration', registerSchema);
 
 export default UserRegistration;

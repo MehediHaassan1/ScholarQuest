@@ -7,8 +7,14 @@ const router = Router();
 
 router.post(
     '/register',
-    validateRequestHandler(AuthValidations.registrationSchema),
+    validateRequestHandler(AuthValidations.registrationValidationSchema),
     AuthController.registerUser
+);
+
+router.post(
+    '/login',
+    validateRequestHandler(AuthValidations.loginValidationSchema),
+    AuthController.loginUser
 )
 
 export const AuthRoutes = router;

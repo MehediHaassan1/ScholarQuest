@@ -1,7 +1,9 @@
 import httpStatus from "http-status";
 import AppError from "../../errors/AppError";
-import { TRegister } from "./auth.interface"
+import { TLogin, TRegister } from "./auth.interface"
 import UserRegistration from "./auth.model"
+import { createToken } from "./auth.utils";
+import config from "../../config";
 
 const registerUserIntoDB = async (payload: TRegister) => {
     // check the username is taken or not
@@ -20,6 +22,54 @@ const registerUserIntoDB = async (payload: TRegister) => {
     return result;
 }
 
+const loginUserIntoDB = async (payload: TLogin) => {
+    // check the user is exists or not.
+    const userExists = await UserRegistration.findOne({ email: payload.email });
+    if (!userExists) {
+        throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+    }
+
+    // check the user is deleted or not
+    const isDeleted = userExists?.isDeleted;
+    if (isDeleted) {
+        throw new AppError(httpStatus.FORBIDDEN, 'User not exists');
+    }
+
+    // check the user is deleted or not
+    const status = userExists?.status;
+    if (status === 'blocked') {
+        throw new AppError(httpStatus.FORBIDDEN, 'User not exists');
+    }
+
+    // check the password is correct or not
+    if (!(await UserRegistration.isPasswordMatched(payload?.password, userExists?.password)))
+        throw new AppError(httpStatus.FORBIDDEN, 'Password do not matched');
+
+    // create access token and refresh token!
+    const jwtPayload = {
+        user: userExists?.email,
+        role: userExists.role,
+    };
+
+    const accessToken = createToken(
+        jwtPayload,
+        config.jwt_access_secret as string,
+        config.jwt_access_expires_in as string,
+    );
+
+    const refreshToken = createToken(
+        jwtPayload,
+        config.jwt_refresh_secret as string,
+        config.jwt_refresh_expires_in as string,
+    );
+
+    return {
+        accessToken,
+        refreshToken
+    }
+}
+
 export const AuthServices = {
     registerUserIntoDB,
+    loginUserIntoDB,
 }

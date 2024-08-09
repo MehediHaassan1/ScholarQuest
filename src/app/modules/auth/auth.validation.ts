@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const registrationSchema = z.object({
+const registrationValidationSchema = z.object({
     username: z.string({ required_error: "Username is required." })
         .min(6, { message: "Username must be at least 6 characters long." })
         .max(12, { message: "Username should not exceed 12 characters." }),
@@ -11,6 +11,14 @@ const registrationSchema = z.object({
         .max(12, { message: "Password should not exceed 12 characters." }),
 });
 
+const loginValidationSchema = z.object({
+    email: z.string({ required_error: "Email is required" })
+        .email({ message: "Invalid email address" }),
+    password: z.string({ required_error: "Password is required" }),
+});
+
+
 export const AuthValidations = {
-    registrationSchema
+    registrationValidationSchema,
+    loginValidationSchema
 }
