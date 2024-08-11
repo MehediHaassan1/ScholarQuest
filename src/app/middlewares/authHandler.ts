@@ -3,7 +3,7 @@ import AppError from "../errors/AppError"
 import catchAsync from "../utils/catchAsync"
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import config from "../config"
-import UserRegistration from "../modules/auth/auth.model"
+import User from "../modules/user/user.model"
 
 const authHandler = (...userRoles) => {
     return catchAsync(async (req, res, next) => {
@@ -22,7 +22,9 @@ const authHandler = (...userRoles) => {
         const { user, role } = decoded;
 
         // check the user exists or not
-        const existingUser = await UserRegistration.findOne({ email: user });
+        const existingUser = await User.findOne({ email: user });
+        console.log(existingUser);
+        
         if (!existingUser) {
             throw new AppError(httpStatus.FORBIDDEN, 'Forbidden access!')
         }
