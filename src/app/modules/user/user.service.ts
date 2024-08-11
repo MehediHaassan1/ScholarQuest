@@ -77,7 +77,7 @@ const changePasswordFromDB = async (
     payload: { oldPassword: string; newPassword: string },
 ) => {
     // checking if the user is exist
-    const user = await User.findOne({ email: userData.user });
+    const user = await User.findOne({ email: userData.user }).select('+password');
 
     if (!user) {
         throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
@@ -248,10 +248,32 @@ const updateUserRoleIntoDB = async (id: string) => {
 
 }
 
+const getUserDataFromDB = async (userData: JwtPayload) => {
+    const user = await User.findOne({ email: userData?.user });
+    if (!user) {
+        throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+    }
+
+    // check the user is deleted or not
+    const isDeleted = user?.isDeleted;
+    if (isDeleted) {
+        throw new AppError(httpStatus.FORBIDDEN, 'User not exists');
+    }
+
+    // check the user is blocked or not
+    const status = user?.status;
+    if (status === 'blocked') {
+        throw new AppError(httpStatus.FORBIDDEN, 'User not exists');
+    }
+
+    return user;
+}
+
 export const UserServices = {
     registerUserIntoDB,
     loginUserIntoDB,
     changePasswordFromDB,
     updateUserRoleIntoDB,
     updateUserProfileIntoDB,
+    getUserDataFromDB,
 }

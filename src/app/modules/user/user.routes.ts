@@ -37,4 +37,10 @@ router.patch(
     UserController.updateUserRole
 )
 
+router.get(
+    '/profile',
+    authHandler('user', 'moderator', 'admin'),
+    UserController.getUserData
+)
+
 export const UserRoutes = router;

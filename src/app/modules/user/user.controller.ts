@@ -72,10 +72,22 @@ const updateUserRole = catchAsync(async (req, res) => {
     })
 })
 
+const getUserData = catchAsync(async (req, res) => {
+    const userData = req.user;
+    const result = await UserServices.getUserDataFromDB(userData);
+    sendResponse(res, {
+        status: httpStatus.OK,
+        success: true,
+        message: "User profile fetched successfully",
+        data: result,
+    })
+})
+
 export const UserController = {
     registerUser,
     loginUser,
     changePassword,
     updateUserRole,
     updateUserProfile,
+    getUserData,
 }

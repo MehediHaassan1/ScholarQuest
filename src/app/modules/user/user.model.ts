@@ -95,6 +95,7 @@ const UserSchema = new Schema<TUser, TUserModel>({
     },
     password: {
         type: String,
+        select: 0
     },
     isDeleted: {
         type: Boolean,
