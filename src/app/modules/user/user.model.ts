@@ -103,7 +103,7 @@ const UserSchema = new Schema<TUser, TUserModel>({
     },
     status: {
         type: String,
-        enum: ['active', 'blocked'],
+        enum: ['active', 'block'],
         default: 'active',
     },
     dateOfBirth: {
@@ -149,6 +149,17 @@ const UserSchema = new Schema<TUser, TUserModel>({
     },
 }, {
     timestamps: true, // Add timestamps (createdAt, updatedAt)
+});
+
+// Query Middleware
+UserSchema.pre('find', function (next) {
+    this.find({ isDeleted: { $ne: true } });
+    next();
+});
+
+UserSchema.pre('findOne', function (next) {
+    this.find({ isDeleted: { $ne: true } });
+    next();
 });
 
 // hashed the password field

@@ -9,7 +9,7 @@ const registerUser = catchAsync(async (req, res) => {
     const result = await AuthService.registerUserIntoDB(registerUserInfo)
 
     sendResponse(res, {
-        status: httpStatus.OK,
+        statusCode: httpStatus.OK,
         success: true,
         message: "User registered successfully",
         data: result,
@@ -30,7 +30,7 @@ const loginUser = catchAsync(async (req, res) => {
     });
 
     sendResponse(res, {
-        status: httpStatus.OK,
+        statusCode: httpStatus.OK,
         success: true,
         message: "User logged in successfully",
         data: { accessToken },
@@ -42,7 +42,7 @@ const changePassword = catchAsync(async (req, res) => {
     const passwordData = req.body;
     const result = await AuthService.changePasswordFromDB(userData, passwordData)
     sendResponse(res, {
-        status: httpStatus.OK,
+        statusCode: httpStatus.OK,
         success: true,
         message: "Password change successfully",
         data: result,
@@ -53,7 +53,7 @@ const getUserData = catchAsync(async (req, res) => {
     const userData = req.user;
     const result = await AuthService.getUserDataFromDB(userData);
     sendResponse(res, {
-        status: httpStatus.OK,
+        statusCode: httpStatus.OK,
         success: true,
         message: "User profile fetched successfully",
         data: result,

@@ -4,8 +4,9 @@ import catchAsync from "../utils/catchAsync"
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import config from "../config"
 import User from "../modules/user/user.model"
+import { TUserRole } from "../modules/user/user.interface"
 
-const authHandler = (...userRoles) => {
+const authHandler = (...userRoles: TUserRole[]) => {
     return catchAsync(async (req, res, next) => {
         const authorization = req.headers.authorization
         const token = authorization?.split(' ')[1]
@@ -23,8 +24,7 @@ const authHandler = (...userRoles) => {
 
         // check the user exists or not
         const existingUser = await User.findOne({ email: user });
-        console.log(existingUser);
-        
+
         if (!existingUser) {
             throw new AppError(httpStatus.FORBIDDEN, 'Forbidden access!')
         }

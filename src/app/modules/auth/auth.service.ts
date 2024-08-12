@@ -40,7 +40,7 @@ const loginUserIntoDB = async (payload: TLogin) => {
 
     // check the user is deleted or not
     const status = userExists?.status;
-    if (status === 'blocked') {
+    if (status === 'block') {
         throw new AppError(httpStatus.FORBIDDEN, 'User not exists');
     }
 
@@ -94,7 +94,7 @@ const changePasswordFromDB = async (
 
     const userStatus = user?.status;
 
-    if (userStatus === 'blocked') {
+    if (userStatus === 'block') {
         throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked ! !');
     }
 
@@ -136,7 +136,7 @@ const getUserDataFromDB = async (userData: JwtPayload) => {
 
     // check the user is blocked or not
     const status = user?.status;
-    if (status === 'blocked') {
+    if (status === 'block') {
         throw new AppError(httpStatus.FORBIDDEN, 'User not exists');
     }
 

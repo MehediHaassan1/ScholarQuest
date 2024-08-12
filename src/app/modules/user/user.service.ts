@@ -1,12 +1,72 @@
 import httpStatus from "http-status";
 import AppError from "../../errors/AppError";
 import { TUser } from "./user.interface"
-
 import { JwtPayload } from "jsonwebtoken";
-
 import User from "./user.model";
 
+const getAllUsersFromDB = async () => {
+    const users = await User.find();
+    return users;
+}
 
+const getSingleUsersFromDB = async (id: string) => {
+    // find the user
+    const user = await User.findById(id);
+    if (!user) {
+        throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+    }
+
+    // check the user is deleted or not
+    const isDeleted = user?.isDeleted;
+    if (isDeleted) {
+        throw new AppError(httpStatus.FORBIDDEN, 'User not exists');
+    }
+
+    // check the user is blocked or not
+    const status = user?.status;
+    if (status === 'block') {
+        throw new AppError(httpStatus.FORBIDDEN, 'User not exists');
+    }
+    return user;
+}
+
+const deleteAUserFromDB = async (id: string) => {
+    const user = await User.findById(id);
+    if (!user) {
+        throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+    }
+
+    // check the user is blocked or not
+    const status = user?.status;
+    if (status === 'block') {
+        throw new AppError(httpStatus.FORBIDDEN, 'User not exists');
+    }
+
+    await User.findOneAndUpdate(
+        { email: user?.email },
+        { isDeleted: true },
+        { new: true }
+    )
+    return null;
+}
+
+const changeStatusIntoDB = async (id: string, payload: { status: string }) => {
+    const user = await User.findById(id);
+    if (!user) {
+        throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+    }
+
+    // check the user is deleted or not
+    const isDeleted = user?.isDeleted;
+    if (isDeleted) {
+        throw new AppError(httpStatus.FORBIDDEN, 'User not exists');
+    }
+
+    await User.findByIdAndUpdate(id, payload, {
+        new: true,
+    });
+    return null;
+};
 
 const updateUserProfileIntoDB = async (userData: JwtPayload, profileData: Partial<TUser>) => {
     const { name, presentAddress, permanentAddress, ...rest } = profileData;
@@ -28,7 +88,7 @@ const updateUserProfileIntoDB = async (userData: JwtPayload, profileData: Partia
 
     // check the user is blocked or not
     const status = user?.status;
-    if (status === 'blocked') {
+    if (status === 'block') {
         throw new AppError(httpStatus.FORBIDDEN, 'User not exists');
     }
 
@@ -71,7 +131,7 @@ const updateUserRoleIntoDB = async (id: string) => {
 
     // check the user is blocked or not
     const status = user?.status;
-    if (status === 'blocked') {
+    if (status === 'block') {
         throw new AppError(httpStatus.FORBIDDEN, 'User not exists');
     }
 
@@ -136,6 +196,10 @@ const updateUserRoleIntoDB = async (id: string) => {
 
 
 export const UserService = {
+    getAllUsersFromDB,
+    getSingleUsersFromDB,
+    deleteAUserFromDB,
+    changeStatusIntoDB,
     updateUserRoleIntoDB,
     updateUserProfileIntoDB,
 }

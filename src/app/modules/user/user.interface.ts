@@ -1,4 +1,5 @@
 import { Model } from "mongoose";
+import { USER_ROLE } from "./user.constant";
 
 export interface TUserName {
     firstName: string;
@@ -59,7 +60,7 @@ export interface TUser {
     email: string;
     password: string;
     isDeleted: boolean;
-    status: 'active' | 'blocked';
+    status: 'active' | 'block';
     // ----
     name: TUserName,
     nationality: string;
@@ -78,6 +79,8 @@ export interface TUser {
     legalAndComplianceInformation?: TLegalAndComplianceInformation;
     programSpecificRequirements?: TProgramSpecificRequirements;
 }
+
+export type TUserRole = (typeof USER_ROLE)[keyof typeof USER_ROLE];
 
 export interface TUserModel extends Model<TUser> {
     isPasswordMatched(

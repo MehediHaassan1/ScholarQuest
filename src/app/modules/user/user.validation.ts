@@ -28,7 +28,12 @@ const updateUserProfileSchema = z.object({
     }).optional(),
 });
 
+const changeStatusValidation = z.object({
+    status: z.enum(['active', 'block']),
+})
+
 
 export const UserValidation = {
     updateUserProfileSchema,
+    changeStatusValidation,
 }
